@@ -64,11 +64,26 @@ mongodb-secondary-2:
   restart: always
   volumes_from: 
     - mongodb-data-secondary-2
+
+nginx-data: 
+  container_name: nginx-data
+  image: busybox
+  volumes: 
+    - /opt/nginx
+
 nginx: 
   image: nginx
   ports: 
     - "80:80"
   restart: always
+  links:
+   - tomcat_1
+   - tomcat_2
+  volumes_from: 
+    - nginx-data   
+  volumes: 
+    - "./nginx.conf:/opt/nginx/conf.d/default.conf" 
+
 postgresql: 
   container_name: postgresql
   environment: 
