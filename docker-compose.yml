@@ -1,4 +1,3 @@
---- 
 activemq: 
   container_name: activemq
   hostname: activemq
@@ -6,83 +5,62 @@ activemq:
   ports: 
     - "61616:61616"
   restart: always
-  volumes_from: 
-    - activemq-data
-activemq-data: 
-  container_name: activemq-data
-  image: busybox
-  volumes: 
-    - /opt/activemq/data
-mongodb-data-primary: 
-  container_name: mongodb-data-primary
-  image: busybox
-  volumes: 
-    - /opt/mongodb/primary/db
-mongodb-data-secondary-1: 
-  container_name: mongodb-data-secondary-1
-  image: busybox
-  volumes: 
-    - /opt/mongodb/secondary-1/db
-mongodb-data-secondary-2: 
-  container_name: mongodb-data-secondary-2
-  image: busybox
-  volumes: 
-    - /opt/mongodb/secondary-2/db
+
 mongodb-primary: 
-  command: "mongod --replSet mongoreplicaset"
   container_name: mongodb-primary
-  expose: 
-    - "27017"
+  command: /usr/bin/mongod --replSet rs --journal --smallfiles --rest
   hostname: mongodb-primary
   image: mongo
+  links: 
+    - "mongodb-secondary-1:mongodb-secondary-1"
+    - "mongodb-secondary-2:mongodb-secondary-2"
   ports: 
     - "27017:27017"
+    - "28017:28017"
   restart: always
-  volumes_from: 
-    - mongodb-data-primary
+
 mongodb-secondary-1: 
-  command: "mongod --replSet mongoreplicaset"
   container_name: mongodb-secondary-1
-  expose: 
-    - "27018"
+  command: /usr/bin/mongod --replSet rs --journal --smallfiles --rest
   hostname: mongodb-secondary-1
   image: mongo
   ports: 
     - "27018:27017"
+    - "28018:28017"
   restart: always
-  volumes_from: 
-    - mongodb-data-secondary-1
+
 mongodb-secondary-2: 
-  command: "mongod --replSet mongoreplicaset"
   container_name: mongodb-secondary-2
-  expose: 
-    - "27019"
+  command: /usr/bin/mongod --replSet rs --journal --smallfiles --rest
   hostname: mongodb-secondary-2
   image: mongo
   ports: 
     - "27019:27017"
+    - "28019:28017"
   restart: always
-  volumes_from: 
-    - mongodb-data-secondary-2
 
-nginx-data: 
-  container_name: nginx-data
-  image: busybox
+mongosetup: 
+  image: mongo
+  links: 
+    - mongodb-primary:mongodb-primary
+    - mongodb-secondary-1:mongodb-secondary-1
+    - mongodb-secondary-2:mongodb-secondary-2
   volumes: 
-    - /opt/nginx
+    - ./scripts:/scripts
+  command: /scripts/mongodb-setup.sh
 
 nginx: 
+  container_name: nginx
+  hostname: nginx
   image: nginx
+  links: 
+    - tomcat_1
+    - tomcat_2
   ports: 
     - "80:80"
   restart: always
-  links:
-   - tomcat_1
-   - tomcat_2
-  volumes_from: 
-    - nginx-data   
   volumes: 
-    - "./nginx.conf:/opt/nginx/conf.d/default.conf" 
+    - "./nginx.conf:/opt/nginx/conf.d/default.conf"
 
 postgresql: 
   container_name: postgresql
@@ -94,23 +72,8 @@ postgresql:
   ports: 
     - "5432:5432"
   restart: always
-  volumes_from: 
-    - postgresql-data
-postgresql-data: 
-  container_name: postgresql-data
-  image: busybox
-  volumes: 
-    - /opt/postgresql/data
-tomcat-data-1: 
-  container_name: tomcat-data-1
-  image: busybox
-  volumes: 
-    - "./index.html:/opt/tomcat1/webapps/index.html"
-tomcat-data-2: 
-  container_name: tomcat-data-2
-  image: busybox
-  volumes: 
-    - "./index.html:/opt/tomcat2/webapps/index.html"
+
+
 tomcat_1: 
   container_name: tomcat_1
   hostname: tomcat_1
@@ -118,8 +81,7 @@ tomcat_1:
   ports: 
     - "8080:8080"
   restart: always
-  volumes: 
-    - tomcat-data-1
+
 tomcat_2: 
   container_name: tomcat_2
   hostname: tomcat_2
@@ -127,5 +89,4 @@ tomcat_2:
   ports: 
     - "8081:8081"
   restart: always
-  volumes: 
-    - tomcat-data-1
+

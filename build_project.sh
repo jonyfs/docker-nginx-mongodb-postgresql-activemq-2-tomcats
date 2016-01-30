@@ -27,7 +27,7 @@
 #eval "$(docker-machine env testserver)"
 
 # build images and containers
-docker-compose -f docker-compose.yml -p testserver up -d
+docker-compose -f docker-compose.yml up -d
 
 # configure local DNS resolution for application URL
 #echo "$(docker-machine ip springmusic)   springmusic.com" | sudo tee --append /etc/hosts
