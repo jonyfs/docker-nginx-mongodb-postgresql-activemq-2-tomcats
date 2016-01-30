@@ -40,14 +40,26 @@ mongodb-secondary-2:
   restart: always
 
 mongosetup: 
+  container_name: mongosetup
   image: mongo
   links: 
     - mongodb-primary:mongodb-primary
     - mongodb-secondary-1:mongodb-secondary-1
     - mongodb-secondary-2:mongodb-secondary-2
-  volumes: 
+  volumes:
     - ./scripts:/scripts
-  command: /scripts/mongodb-setup.sh
+  entrypoint: [ "/scripts/setup.sh" ]
+
+verify:
+  container_name: mongosetup
+  image: mongo
+  links: 
+    - mongodb-primary:mongodb-primary
+    - mongodb-secondary-1:mongodb-secondary-1
+    - mongodb-secondary-2:mongodb-secondary-2
+  volumes:
+    - ./scripts:/scripts
+  entrypoint: [ "/scripts/query.sh" ]
 
 nginx: 
   container_name: nginx
@@ -60,7 +72,7 @@ nginx:
     - "80:80"
   restart: always
   volumes: 
-    - "./nginx.conf:/opt/nginx/conf.d/default.conf"
+    - "./nginx.conf:/etc/nginx/nginx.conf"
 
 postgresql: 
   container_name: postgresql
