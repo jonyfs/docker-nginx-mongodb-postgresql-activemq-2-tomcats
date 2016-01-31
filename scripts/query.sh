@@ -15,11 +15,3 @@ mongo ${MONGODB1} <<EOF
   var p = {title: "Good News!", content: "It's working!"}
   db.entries.save(p)
 EOF
-
-
-echo "================================="
-echo "Fetching data from Mongo"
-echo curl http://${MONGODB1}:28017/database-test/entries/?limit=10
-curl http://${MONGODB1}:28017/database-test/entries/?limit=10
-echo "================================="
-echo "DONE"
