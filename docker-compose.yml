@@ -50,8 +50,8 @@ mongosetup:
     - ./scripts:/scripts
   entrypoint: [ "/scripts/setup.sh" ]
 
-verify:
-  container_name: mongosetup
+mongoverify:
+  container_name: mongoverify
   image: mongo
   links: 
     - mongodb-primary:mongodb-primary
@@ -93,6 +93,8 @@ tomcat_1:
   ports: 
     - "8080:8080"
   restart: always
+  volumes: 
+    - "./tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml"
 
 tomcat_2: 
   container_name: tomcat_2
@@ -101,4 +103,7 @@ tomcat_2:
   ports: 
     - "8081:8081"
   restart: always
+  volumes: 
+    - "./tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml"
+
 
