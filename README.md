@@ -35,7 +35,10 @@ c35d3e043cca        mongo                "/entrypoint.sh /usr/"   7 hours ago   
 ### Servers
 
 * NGINX - http://192.168.99.100
-* Tomcat - http://192.168.99.100:8080
+* Tomcat 1 - http://192.168.99.100:8080
+* Tomcat 2 - http://192.168.99.100:8081
+* ActiveMQ - http://192.168.99.100:8161
+* PostGreSql - 192.168.99.100:5432
 * MongoDB Replicaset:
 	* http://192.168.99.100:28017
 	* http://192.168.99.100:28018

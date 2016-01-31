@@ -2,8 +2,9 @@ activemq:
   container_name: activemq
   hostname: activemq
   image: webcenter/activemq
-  ports: 
+  ports:
     - "61616:61616"
+    - "8161:8161"
   restart: always
 
 mongodb-primary: 
@@ -101,7 +102,7 @@ tomcat_2:
   hostname: tomcat_2
   image: tomcat
   ports: 
-    - "8081:8081"
+    - "8081:8080"
   restart: always
   volumes: 
     - "./tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml"
